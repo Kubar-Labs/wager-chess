@@ -136,7 +136,7 @@ library ChessLogic {
                 int8 dir = byWhite ? int8(1) : int8(-1);
                 uint8 r = _rank(sq);
                 uint8 f = _file(sq);
-                if (_rank(targetSq) == uint8(int8(r) + dir)) {
+                if (_rank(targetSq) == (byWhite ? r + 1 : r - 1)) {
                     if (
                         _file(targetSq) == f + 1 ||
                         (f > 0 && _file(targetSq) == f - 1)
@@ -230,7 +230,7 @@ library ChessLogic {
         // Single step forward
         if (toF == fromF) {
             if (targetPiece != EMPTY) return false;
-            if (toR == uint8(int8(fromR) + dir)) {
+            if (toR == (white ? fromR + 1 : fromR - 1)) {
                 // Promotion check
                 if (toR == (white ? 7 : 0)) {
                     return _isValidPromotion(promotion);
@@ -239,8 +239,8 @@ library ChessLogic {
             }
             // Double step from starting rank
             uint8 startRank = white ? 1 : 6;
-            if (fromR == startRank && toR == uint8(int8(fromR) + 2 * dir)) {
-                uint8 mid = from + uint8(int8(8) * dir);
+            if (fromR == startRank && toR == (white ? fromR + 2 : fromR - 2)) {
+                uint8 mid = white ? from + 8 : from - 8;
                 if (g.board[mid] != EMPTY) return false;
                 return promotion == NONE;
             }
@@ -248,7 +248,7 @@ library ChessLogic {
         }
 
         // Capture (diagonal)
-        if (toR == uint8(int8(fromR) + dir) && (toF == fromF + 1 || (fromF > 0 && toF == fromF - 1))) {
+        if (toR == (white ? fromR + 1 : fromR - 1) && (toF == fromF + 1 || (fromF > 0 && toF == fromF - 1))) {
             // Normal capture
             if (targetPiece != EMPTY && _isWhite(targetPiece) != white) {
                 if (toR == (white ? 7 : 0)) {

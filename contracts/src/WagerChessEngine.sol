@@ -149,11 +149,15 @@ contract WagerChessEngine {
             requiredFee += 0.0005 ether;
         }
 
+
         if (msg.value < requiredFee) revert MoveFeeRequired();
 
         // Collect fee
+        if (msg.value < requiredFee) revert MoveFeeRequired();
+
         wg.totalFeesCollected += requiredFee;
         uint256 refund = msg.value - requiredFee;
+
         if (refund > 0) {
             (bool ok, ) = msg.sender.call{value: refund}("");
             if (!ok) revert TransferFailed();

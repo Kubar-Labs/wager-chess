@@ -7,7 +7,7 @@ import { useAccount, useWriteContract, useReadContract, usePublicClient } from "
 import { parseEther } from "viem";
 import WagerChessEngineABI from "../../abi/WagerChessEngine.json";
 
-export const WAGER_CHESS_ENGINE_ADDRESS = "0xD595877fd47C794Bf970964bB65f50CAEf9781B0";
+export const WAGER_CHESS_ENGINE_ADDRESS = "0xF2c1e9a198A11eAD70bF7C9d054cFc3AD460AEF2";
 
 // Convert algebraic e2 to index 0-63
 function squareToIndex(sq: string): number {
