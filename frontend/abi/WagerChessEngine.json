@@ -1,0 +1,536 @@
+[
+  {
+    "type": "fallback",
+    "stateMutability": "payable"
+  },
+  {
+    "type": "receive",
+    "stateMutability": "payable"
+  },
+  {
+    "type": "function",
+    "name": "DEFAULT_MOVE_FEE",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "claimPayout",
+    "inputs": [
+      {
+        "name": "gameId",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "createGame",
+    "inputs": [
+      {
+        "name": "opponent",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "gameId",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "payable"
+  },
+  {
+    "type": "function",
+    "name": "games",
+    "inputs": [
+      {
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "chess",
+        "type": "tuple",
+        "internalType": "struct ChessLogic.Game",
+        "components": [
+          {
+            "name": "board",
+            "type": "uint8[64]",
+            "internalType": "uint8[64]"
+          },
+          {
+            "name": "whiteToMove",
+            "type": "bool",
+            "internalType": "bool"
+          },
+          {
+            "name": "whiteKingPos",
+            "type": "uint8",
+            "internalType": "uint8"
+          },
+          {
+            "name": "blackKingPos",
+            "type": "uint8",
+            "internalType": "uint8"
+          },
+          {
+            "name": "whiteCanCastleKingside",
+            "type": "bool",
+            "internalType": "bool"
+          },
+          {
+            "name": "whiteCanCastleQueenside",
+            "type": "bool",
+            "internalType": "bool"
+          },
+          {
+            "name": "blackCanCastleKingside",
+            "type": "bool",
+            "internalType": "bool"
+          },
+          {
+            "name": "blackCanCastleQueenside",
+            "type": "bool",
+            "internalType": "bool"
+          },
+          {
+            "name": "enPassantTarget",
+            "type": "uint8",
+            "internalType": "uint8"
+          },
+          {
+            "name": "halfmoveClock",
+            "type": "uint8",
+            "internalType": "uint8"
+          },
+          {
+            "name": "fullmoveNumber",
+            "type": "uint16",
+            "internalType": "uint16"
+          },
+          {
+            "name": "gameOver",
+            "type": "bool",
+            "internalType": "bool"
+          },
+          {
+            "name": "winner",
+            "type": "address",
+            "internalType": "address"
+          }
+        ]
+      },
+      {
+        "name": "whitePlayer",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "blackPlayer",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "wagerAmount",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "totalPot",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "moveFee",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "totalFeesCollected",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "active",
+        "type": "bool",
+        "internalType": "bool"
+      },
+      {
+        "name": "payoutsSettled",
+        "type": "bool",
+        "internalType": "bool"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "getBoard",
+    "inputs": [
+      {
+        "name": "gameId",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint8[64]",
+        "internalType": "uint8[64]"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "isGameOver",
+    "inputs": [
+      {
+        "name": "gameId",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "bool",
+        "internalType": "bool"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "isWhiteToMove",
+    "inputs": [
+      {
+        "name": "gameId",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "bool",
+        "internalType": "bool"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "joinGame",
+    "inputs": [
+      {
+        "name": "gameId",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "payable"
+  },
+  {
+    "type": "function",
+    "name": "makeMove",
+    "inputs": [
+      {
+        "name": "gameId",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "from",
+        "type": "uint8",
+        "internalType": "uint8"
+      },
+      {
+        "name": "to",
+        "type": "uint8",
+        "internalType": "uint8"
+      },
+      {
+        "name": "promotion",
+        "type": "uint8",
+        "internalType": "uint8"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "payable"
+  },
+  {
+    "type": "function",
+    "name": "nextGameId",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "pendingWithdrawals",
+    "inputs": [
+      {
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "withdrawUnmatchedWager",
+    "inputs": [
+      {
+        "name": "gameId",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "event",
+    "name": "FeeCollected",
+    "inputs": [
+      {
+        "name": "gameId",
+        "type": "uint256",
+        "indexed": true,
+        "internalType": "uint256"
+      },
+      {
+        "name": "amount",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "GameCreated",
+    "inputs": [
+      {
+        "name": "gameId",
+        "type": "uint256",
+        "indexed": true,
+        "internalType": "uint256"
+      },
+      {
+        "name": "white",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "black",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "wager",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "GameEnded",
+    "inputs": [
+      {
+        "name": "gameId",
+        "type": "uint256",
+        "indexed": true,
+        "internalType": "uint256"
+      },
+      {
+        "name": "winner",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "outcome",
+        "type": "uint8",
+        "indexed": false,
+        "internalType": "uint8"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "MovePlayed",
+    "inputs": [
+      {
+        "name": "gameId",
+        "type": "uint256",
+        "indexed": true,
+        "internalType": "uint256"
+      },
+      {
+        "name": "player",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "from",
+        "type": "uint8",
+        "indexed": false,
+        "internalType": "uint8"
+      },
+      {
+        "name": "to",
+        "type": "uint8",
+        "indexed": false,
+        "internalType": "uint8"
+      },
+      {
+        "name": "promotion",
+        "type": "uint8",
+        "indexed": false,
+        "internalType": "uint8"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "PayoutClaimed",
+    "inputs": [
+      {
+        "name": "gameId",
+        "type": "uint256",
+        "indexed": true,
+        "internalType": "uint256"
+      },
+      {
+        "name": "recipient",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "amount",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "error",
+    "name": "AlreadyJoined",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "GameAlreadyActive",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "GameNotActive",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "GameNotActive",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "GameNotOver",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "InvalidMove",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "InvalidPromotion",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "InvalidWager",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "MoveFeeRequired",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "NoPayoutAvailable",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "NotAParticipant",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "NotYourTurn",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "OpponentCannotBeSelf",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "TransferFailed",
+    "inputs": []
+  }
+]

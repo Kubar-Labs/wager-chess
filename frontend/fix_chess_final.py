@@ -1,4 +1,8 @@
-"use client";
+import os
+
+file_path = os.path.expanduser("~/hermes-workspace/wager-chess/frontend/app/components/ChessGame.tsx")
+with open(file_path, "w") as f:
+    f.write('''"use client";
 
 import { useState, useCallback } from "react";
 import { Chess } from "chess.js";
@@ -151,9 +155,8 @@ export function ChessGame() {
 
       <div className="rounded-xl overflow-hidden border border-border shadow-lg">
         <Chessboard
-          // @ts-ignore
           position={game.fen()}
-          onPieceDrop={(sourceSquare: string, targetSquare: string) => {
+          onPieceDrop={(sourceSquare, targetSquare) => {
             makeMove(sourceSquare, targetSquare);
             return true;
           }}
@@ -180,3 +183,4 @@ export function ChessGame() {
     </div>
   );
 }
+''')
