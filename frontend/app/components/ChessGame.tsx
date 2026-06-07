@@ -3,11 +3,11 @@
 import { useState, useCallback } from "react";
 import { Chess } from "chess.js";
 import { Chessboard } from "react-chessboard";
-import { useAccount, useWriteContract, useReadContract } from "wagmi";
+import { useAccount, useWriteContract, useReadContract, usePublicClient } from "wagmi";
 import { parseEther } from "viem";
 import WagerChessEngineABI from "../../abi/WagerChessEngine.json";
 
-export const WAGER_CHESS_ENGINE_ADDRESS = "0x9a5DdD1Fd07F62A5945DcA96078889ADcdD69D73";
+export const WAGER_CHESS_ENGINE_ADDRESS = "0xD595877fd47C794Bf970964bB65f50CAEf9781B0";
 
 // Convert algebraic e2 to index 0-63
 function squareToIndex(sq: string): number {
@@ -24,6 +24,7 @@ export function ChessGame() {
   const [inputGameId, setInputGameId] = useState("");
 
   const { writeContractAsync } = useWriteContract();
+  const publicClient = usePublicClient();
 
   const { data: contractGameState } = useReadContract({
     address: WAGER_CHESS_ENGINE_ADDRESS,
@@ -57,14 +58,33 @@ export function ChessGame() {
         const toIdx = squareToIndex(targetSquare);
         const promotion = move.promotion ? 5 : 0; // 5=Queen
 
-        console.log("Submitting TX...");
+        
+        console.log("Fetching dynamic fee...");
+        const fee = await publicClient?.readContract({
+          address: WAGER_CHESS_ENGINE_ADDRESS,
+          abi: WagerChessEngineABI,
+          functionName: "getMoveFee",
+          args: [gameId, fromIdx],
+        }) as bigint;
+
+        // If it's going to be a check, we need to manually add 0.0005 to the fee requirement on the frontend 
+        // to pass the msg.value check, because getMoveFee only calculates the piece base cost, not the post-move check penalty.
+        let finalValue = fee;
+        const testCheck = new Chess(game.fen());
+        testCheck.move({ from: sourceSquare, to: targetSquare, promotion: "q" });
+        if (testCheck.isCheck()) {
+            finalValue = finalValue + parseEther("0.0005");
+        }
+
+        console.log("Submitting TX with value:", finalValue.toString());
         const tx = await writeContractAsync({
           address: WAGER_CHESS_ENGINE_ADDRESS,
           abi: WagerChessEngineABI,
           functionName: "makeMove",
           args: [gameId, fromIdx, toIdx, promotion],
-          value: parseEther("0.0005"), // DEFAULT_MOVE_FEE
+          value: finalValue, 
         });
+
 
         console.log("Move TX submitted:", tx);
         

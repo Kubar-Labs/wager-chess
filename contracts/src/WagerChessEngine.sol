@@ -105,10 +105,24 @@ contract WagerChessEngine {
 
     /**
      * @notice Play a move. Must pay the fixed moveFee.
-     * @param from Source square (0-63).
-     * @param to   Destination square (0-63).
-     * @param promotion For pawn promotion: 2=N, 3=B, 4=R, 5=Q. 0=none.
      */
+
+    function getMoveFee(uint256 gameId, uint8 from) public view returns (uint256) {
+        WagerGame storage wg = games[gameId];
+        uint8 p = wg.chess.board[from];
+        uint8 pt = p > 8 ? p - 8 : p; // _pieceType equivalent
+        
+        // 1=Pawn, 2=Knight, 3=Bishop, 4=Rook, 5=Queen, 6=King
+        if (pt == 5) return 0.0009 ether; // Queen ($9)
+        if (pt == 4) return 0.0005 ether; // Rook
+        if (pt == 3) return 0.0003 ether; // Bishop
+        if (pt == 2) return 0.0003 ether; // Knight
+        if (pt == 1) return 0.0001 ether; // Pawn ($1)
+        if (pt == 6) return 0.0001 ether; // King ($1)
+        
+        return DEFAULT_MOVE_FEE;
+    }
+
     function makeMove(
         uint256 gameId,
         uint8 from,
@@ -117,32 +131,34 @@ contract WagerChessEngine {
     ) external payable {
         WagerGame storage wg = games[gameId];
         if (!wg.active) revert GameNotActive();
-        if (msg.value < wg.moveFee) revert MoveFeeRequired();
+
+        uint256 requiredFee = getMoveFee(gameId, from);
 
         // Verify it's the sender's turn
         bool whiteTurn = wg.chess.whiteToMove;
         address expected = whiteTurn ? wg.whitePlayer : wg.blackPlayer;
         if (msg.sender != expected) revert NotYourTurn();
 
-        // Validate promotion if applicable
-        if (promotion != 0) {
-            uint8 pt = ChessLogic._pieceType(wg.chess.board[from]); // Note: library internals not externally visible
-            // We rely on ChessLogic.executeMove to validate the move including promotion.
-            // Checks in executeMove will catch invalid promotions via isValidMove.
+        // Check if the move gives a check
+        // Note: ChessLogic doesn't easily expose this pre-move without executing,
+        // so we'll execute the move, then check if the opponent is in check.
+        ChessLogic.executeMove(wg.chess, from, to, promotion != 0 ? promotion : ChessLogic.NONE);
+        
+        // Is opponent now in check? Add $5 fee.
+        if (ChessLogic.isInCheck(wg.chess, !whiteTurn)) {
+            requiredFee += 0.0005 ether;
         }
 
+        if (msg.value < requiredFee) revert MoveFeeRequired();
+
         // Collect fee
-        wg.totalFeesCollected += wg.moveFee;
-        uint256 refund = msg.value - wg.moveFee;
+        wg.totalFeesCollected += requiredFee;
+        uint256 refund = msg.value - requiredFee;
         if (refund > 0) {
             (bool ok, ) = msg.sender.call{value: refund}("");
             if (!ok) revert TransferFailed();
         }
-        emit FeeCollected(gameId, wg.moveFee);
-
-        // Execute chess move
-        ChessLogic.executeMove(wg.chess, from, to, promotion != 0 ? promotion : ChessLogic.NONE);
-
+        emit FeeCollected(gameId, requiredFee);
         emit MovePlayed(gameId, msg.sender, from, to, promotion);
 
         // Handle game end
